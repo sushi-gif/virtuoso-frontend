@@ -359,7 +359,6 @@ a span{
 
 
 .content {
-  border-top: 1px solid var(--c-border-primary);
   margin-top: 2rem;
   display: flex;
   align-items: flex-start;
@@ -985,7 +984,7 @@ textarea:focus, .input:focus {
 
 .claude-btn{
   position: absolute;
-  background-color: #182433;
+  background-color: #066fd1;
   right: 12px;
   bottom: 12px;
   width: 48px;
@@ -996,7 +995,7 @@ textarea:focus, .input:focus {
 
 .clear-chat-btn{
   position: absolute;
-  background-color: #182433;
+  background-color: #066fd1;
   right: 68px;
   bottom: 12px;
   width: 48px;
@@ -1048,4 +1047,233 @@ svg{
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.formatted-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.formatted-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.formatted-table td {
+  text-align: left;
+}
+
+
+/* General Layout */
+.main-header {
+  margin-bottom: 20px;
+}
+
+.description {
+  padding-top: 16px;
+  color: #555;
+}
+
+/* Table Styling */
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  border-radius: 16px;
+}
+
+.users-table thead {
+  color: #fff;
+  font-weight: 600;
+  background-color: #066fd1;
+}
+
+.users-table *{
+  border-color: #dee8f8 !important;
+}
+
+.users-table th, .users-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.users-table .row-even {
+  background-color: #f9f9f9;
+}
+
+.users-table .row-odd {
+  background-color: #f9f9f9;
+}
+
+
+
+/* Badges */
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.badge.admin {
+  background-color: #ecf3fe;
+  font-weight: unset;
+}
+
+.badge.user {
+  background-color: #ecf3fe;
+  font-weight: unset;
+}
+
+/* Loading & Error Messages */
+.loading-text {
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+}
+
+.user-edit{
+  height: fit-content;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-bottom: none;
+  margin: auto;
+  border-radius: 4px;
+  background-color: #066fd1;
+  color: #fff;
+  font-weight: 500;
+}
+
+.user-edit svg{
+  margin-right: 4px;
+  margin-top: -2px;
+  min-width: unset;
+  min-height: unset;
+}
+
+
+.dashboard-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  padding: 20px;
+  text-align: center;
+  background-color: var(--c-background-primary);
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(24, 36, 51, 0.06);
+
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  margin: 10px 0;
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+}
+
+.chart-wrapper {
+  text-align: center;
+  background-color: var(--c-background-primary);
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(24, 36, 51, 0.06);
+  padding: 20px;
+}
+
+.chart-wrapper h3 {
+  margin: 0 0 20px 0;
+  text-align: center;
+  color: #34495e;
+}
+
+/* Add to existing styles */
+.stat-card:nth-child(4) {
+  background: #fff8f0;
+}
+
+/* Cost-specific chart elements */
+.recharts-tooltip-item-cost {
+  color: #FF8042 !important;
+}
+
+.recharts-legend-item-text {
+  color: #666;
+}
+
+/* Custom checkbox styling */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: relative;
+  height: 18px;
+  width: 18px;
+  min-width: 18px;
+  background-color: #fff;
+  border: 1px solid #dce1e7;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(24, 36, 51, 0.06);
+  margin-right: 10px;
+  transition: all 0.15s ease-in-out;
+}
+
+.checkbox-label:hover input ~ .checkmark {
+  border-color: #a3aab2;
+}
+
+.checkbox-label input:checked ~ .checkmark {
+  background-color: #2c7be5;
+  border-color: #2c7be5;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 3px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-label input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-help {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+  margin-left: 28px;
 }

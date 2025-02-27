@@ -1,6 +1,6 @@
 import { useAuth } from "./auth/auth";
 import {LoginView} from "./components/LoginView";
-
+import { ToastContainer } from "react-toastify";
 import "./style/ui.css";
 import { Header } from "./components/Header";
 import { Loading } from "./components/Loading";
@@ -24,6 +24,7 @@ function App() {
       <Header />
       <main className="main">
         <div className="responsive-wrapper">
+          <ToastContainer position="top-center" autoClose={500} />
           <Outlet />
         </div>
       </main>

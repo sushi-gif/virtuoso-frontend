@@ -4,7 +4,6 @@ import { GiArtificialHive } from "react-icons/gi";
 import { GoServer } from "react-icons/go";
 import { RiGroupLine } from "react-icons/ri";
 import { FaRegUser } from "react-icons/fa";
-import { IoSearchOutline } from "react-icons/io5";
 import { MdOutlineLogout } from "react-icons/md";
 
 import logo from "../img/logo.svg";
@@ -23,12 +22,6 @@ export function Header() {
               <img src={logo} className="logo-xs"/>
             </a>
             <div className="header-navigation-actions">
-            <a href="/settings" className="icon-button">
-              <i className="ph-gear-bold"></i>
-            </a>
-            <a href="#" className="icon-button">
-              <i className="ph-bell-bold"></i>
-            </a>
             <a href="/profile" className="button leftmr">
               <FaRegUser size={16}/>
               <span>{auth?.userData?.username}</span>
@@ -47,12 +40,10 @@ export function Header() {
               <NavLink to={`/mcp`} className={({ isActive }) => (isActive ? 'active-nav' : '')}><GiArtificialHive size={22}/> <span>Claude</span></NavLink>
               <NavLink to={`/templates`} className={({ isActive }) => (isActive ? 'active-nav' : '')}><AiOutlineCluster size={22}/> <span>Templates</span></NavLink>
               <NavLink to={`/vm`} className={({ isActive }) => (isActive ? 'active-nav' : '')}><GoServer size={22}/> <span>Virtual Machine</span></NavLink>
-              <NavLink to={`/users`} className={({ isActive }) => (isActive ? 'active-nav' : '')}><RiGroupLine size={20}/> <span>Users</span></NavLink>
+              {auth?.userData.is_admin && (
+                <NavLink to={`/users`} className={({ isActive }) => (isActive ? 'active-nav' : '')}><RiGroupLine size={20}/> <span>Users</span></NavLink>
+              )}
             </nav>
-            <div className="search-nav">
-              <IoSearchOutline size={22}/>
-              <input className="strip-input" type="text" value="" placeholder="Search…" aria-label="Search in website" />
-            </div>          
             </div>
         </div>
       </header>

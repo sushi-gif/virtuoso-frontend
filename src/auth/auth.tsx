@@ -28,6 +28,9 @@ const deleteCookie = (name: string) => {
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
 };
 
+let apiEndpoint = process.env["REACT_APP_API_ENDPOINT"] || "http://localhost:8000";
+if (apiEndpoint.endsWith("/")) apiEndpoint = apiEndpoint.slice(0, -1);
+
 // Auth provider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchUserData = async (token: string) => {
     try {
-      const response = await fetch('http://localhost:8000/auth/user', {
+      const response = await fetch(`${apiEndpoint}/auth/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -63,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (username: string, password: string): Promise<void> => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/auth/login', {
+      const response = await fetch(`${apiEndpoint}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,12 +80,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const { access_token, token_type } = await response.json();
       setToken(access_token);
-
       // Persist token in cookies
       setCookie('authToken', access_token, 7); // Save for 7 days
 
       // Fetch user data after login
-      const userResponse = await fetch('http://localhost:8000/auth/user', {
+      const userResponse = await fetch(`${apiEndpoint}/auth/users/me`, {
         headers: {
           Authorization: `${token_type} ${access_token}`,
         },

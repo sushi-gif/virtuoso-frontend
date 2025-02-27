@@ -1,5 +1,5 @@
 import { useAuth } from "../auth/auth";
-import "../style/settings.css";
+import "../style/app.css";
 import { useApi } from "../utils/Hooks";
 import { useQuery, useQueryClient } from "react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -169,7 +169,6 @@ export function VMs() {
         {},
         formData
       );
-      console.log("VM created successfully:", response);
       closeModal(); // Close modal after successful creation
     } catch (error) {
       console.error("Error creating VM:", error);
@@ -579,7 +578,6 @@ export function VMSettings() {
     if (isConfirmed) {
       try {
         await apiCall("DELETE", `/vms/${id}`);
-        console.log("Machine deleted successfully.");
       } catch (error) {
         console.error("Error deleting machine:", error);
       }
@@ -877,8 +875,6 @@ export function VmCosts() {
     return <p>Virtual Machine data is not available.</p>;
   }
 
-  console.log("here");
-  console.log(vmCosts);
 
   // Transform the data for the chart
   const chartData = vmCosts.map((cost) => {

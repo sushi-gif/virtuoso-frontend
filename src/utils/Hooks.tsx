@@ -1,120 +1,88 @@
-import {DependencyList, useContext, useEffect, useState} from "react";
+import { useState } from "react";
 import { useAuth } from "../auth/auth";
-
-export function useGlobalListener<E extends keyof WindowEventMap>(event: E, handler: (this: Window, ev: WindowEventMap[E]) => void, deps: DependencyList = []) {
-  useEffect(() => {
-    window.addEventListener(event, handler);
-    return () => window.removeEventListener(event, handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [event, handler, ...deps]);
-}
-
-export function useLocalStorage<T>(key: string, defaultValue: T) {
-
-  let savedData = localStorage.getItem(key);
-  if (savedData !== null) defaultValue = JSON.parse(savedData);
-
-  const state = useState<T>(defaultValue);
-  const [data, setData] = state;
-
-  useEffect(() => {
-    if (!document.hasFocus()) return;
-    localStorage.setItem(key, JSON.stringify(data));
-  }, [key, data]);
-
-  useGlobalListener("storage", (event) => {
-    if (event.key !== key) return;
-    if (!event.newValue) return;
-    setData(JSON.parse(event.newValue));
-  }, [key, setData]);
-
-  return state;
-
-}
-
-
-export function useIsFirstRender() {
-  const [isFirst, setIsFirst] = useState(true);
-  useEffect(() => { setIsFirst(false) }, []);
-  return isFirst;
-}
-
-export function useFirstRender() {
-  return useState(Date.now())[0];
-}
-
-export function useInterval(callback: () => void, interval: number, deps: DependencyList = []) {
-  useEffect(() => {
-    const ref = setInterval(callback, interval);
-    return () => clearInterval(ref);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [interval, callback, deps]);
-}
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import styles
 
 export function useApi() {
-
   let apiEndpoint = process.env["REACT_APP_API_ENDPOINT"] || "http://localhost:8000";
-  if (apiEndpoint.endsWith("/")) apiEndpoint = apiEndpoint.substring(0, apiEndpoint.length - 1);
+  if (apiEndpoint.endsWith("/")) apiEndpoint = apiEndpoint.slice(0, -1);
 
   const auth = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function apiFetch(endpoint: string, init?: RequestInit) {
-
     if (endpoint.startsWith("/")) endpoint = endpoint.substring(1);
     if (!init) init = {};
     if (!init.headers) init.headers = new Headers();
 
     if (auth?.token) {
-
       const authHeader = `Bearer ${auth.token}`;
-
       if (init.headers instanceof Headers) {
         init.headers.set("Authorization", authHeader);
       } else if (Array.isArray(init.headers)) {
-        init.headers.push(["Authorization", authHeader])
+        init.headers.push(["Authorization", authHeader]);
       } else {
         init.headers["Authorization"] = authHeader;
       }
-
     }
 
     return fetch(`${apiEndpoint}/${endpoint}`, init);
-
   }
 
-  async function apiCall<T>(method: string, endpoint: string, query: NodeJS.Dict<string> = {}, body?: any) {
-
+  async function apiCall<T>(
+    method: string,
+    endpoint: string,
+    query: Record<string, string> = {},
+    body?: any
+  ): Promise<T | null> {
     const headers = new Headers();
-    const init: RequestInit = {method, headers};
+    const init: RequestInit = { method, headers };
 
     if (body instanceof FormData || body instanceof URLSearchParams) {
       init.body = body;
-    } else {
+    } else if (body) {
       init.body = JSON.stringify(body);
       headers.set("Content-Type", "application/json");
     }
 
-    const response = await apiFetch(endpoint + urlEncode(query), init);
-    if (response.status >= 100 && response.status < 400) {
-      if (response.status === 204) return;
-      return response.json().then((res) => res as T);
-    }
+    try {
+      const response = await apiFetch(endpoint + urlEncode(query), init);
+      const json = await response.json();
 
-    throw new Error("API returned an error", {cause: response});
-    
+      if (response.ok) {
+        return json as T;
+      }
+
+      // Extract and display error messages
+      let errorMessage = "An unexpected error occurred.";
+      if (json.detail && Array.isArray(json.detail)) {
+        errorMessage = json.detail.map((err: { msg: string }) => err.msg).join("\n");
+      } else if (json.detail) {
+        errorMessage = json.detail;
+      }
+
+      // Automatically show error in a toast
+      setErrorMessage(errorMessage);
+      toast.error(errorMessage, { position: "top-right", autoClose: 5000 });
+
+      return null;
+    } catch (e) {
+      const networkError = "Network error or server is unreachable.";
+      setErrorMessage(networkError);
+      toast.error(networkError, { position: "top-right", autoClose: 5000 });
+      return null;
+    }
   }
 
-  return {apiFetch, apiCall};
-
+  return { apiFetch, apiCall, errorMessage };
 }
 
-function urlEncode(query: NodeJS.Dict<string> = {}) {
+function urlEncode(query: Record<string, string> = {}) {
   if (Object.keys(query).length === 0) return "";
-  return "?" + Object.entries(query)
-    .map((values) => values
-      .map((v) => v || "")
-      .map(encodeURIComponent)
-    )
-    .map(([key, value]) => `${key}=${value}`)
-    .join("&");
+  return (
+    "?" +
+    Object.entries(query)
+      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value || "")}`)
+      .join("&")
+  );
 }

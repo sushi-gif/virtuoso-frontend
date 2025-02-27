@@ -1,5 +1,5 @@
 import { useAuth } from "../auth/auth";
-import "../style/settings.css";
+import "../style/app.css";
 
 export function Settings() {
 

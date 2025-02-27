@@ -1,5 +1,5 @@
 import { useAuth } from "../auth/auth";
-import "../style/settings.css";
+import "../style/app.css";
 import { useApi } from "../utils/Hooks";
 import { useQuery, useQueryClient } from "react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -79,7 +79,6 @@ export function Templates() {
         {},
         formData
       );
-      console.log("Template created successfully:", response);
       closeModal(); // Close modal after successful creation
     } catch (error) {
       console.error("Error creating Template:", error);
@@ -347,7 +346,6 @@ export function Template() {
         {},
         formData
       );
-      console.log("Template updated successfully:", response);
       navigate("/templates");
     } catch (error) {
       console.error("Error updating template:", error);
@@ -362,7 +360,6 @@ export function Template() {
     if (isConfirmed) {
       try {
         await apiCall("DELETE", `/templates/${id}`);
-        console.log("Template deleted successfully.");
         navigate("/templates");
       } catch (error) {
         console.error("Error deleting template:", error);
